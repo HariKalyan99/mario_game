@@ -1,0 +1,153 @@
+const cardsArray = [
+  {
+    name: "dino",
+    img: "https://pngimg.com/uploads/mario/mario_PNG107.png",
+  },
+  {
+    name: "ferret",
+    img: "https://pngimg.com/uploads/mario/mario_PNG119.png",
+  },
+  {
+    name: "bobomb",
+    img: "https://pngimg.com/uploads/mario/mario_PNG128.png",
+  },
+  {
+    name: "turtle",
+    img: "https://pngimg.com/uploads/mario/small/mario_PNG98.png",
+  },
+  {
+    name: "mushroom-red",
+    img: "https://pngimg.com/uploads/mario/mario_PNG75.png",
+  },
+  {
+    name: "mushroom-yello",
+    img: "https://pngimg.com/uploads/mario/mario_PNG73.png",
+  },
+  {
+    name: "luigi-stand",
+    img: "https://pngimg.com/uploads/mario/mario_PNG44.png",
+  },
+  {
+    name: "luigi-action",
+    img: "https://pngimg.com/uploads/mario/mario_PNG42.png",
+  },
+  {
+    name: "dino",
+    img: "https://pngimg.com/uploads/mario/mario_PNG107.png",
+  },
+  {
+    name: "ferret",
+    img: "https://pngimg.com/uploads/mario/mario_PNG119.png",
+  },
+  {
+    name: "bobomb",
+    img: "https://pngimg.com/uploads/mario/mario_PNG128.png",
+  },
+  {
+    name: "turtle",
+    img: "https://pngimg.com/uploads/mario/small/mario_PNG98.png",
+  },
+  {
+    name: "mushroom-red",
+    img: "https://pngimg.com/uploads/mario/mario_PNG75.png",
+  },
+  {
+    name: "mushroom-yello",
+    img: "https://pngimg.com/uploads/mario/mario_PNG73.png",
+  },
+  {
+    name: "luigi-stand",
+    img: "https://pngimg.com/uploads/mario/mario_PNG44.png",
+  },
+  {
+    name: "luigi-action",
+    img: "https://pngimg.com/uploads/mario/mario_PNG42.png",
+  },
+];
+
+for (let index = 0; index < cardsArray.length; index++) {
+  let j = Math.ceil(Math.random() * (index + 1));
+  [cardsArray[index], cardsArray[j]] = [cardsArray[j], cardsArray[index]];
+}
+
+let gameSurface = document.querySelector(".game-surface");
+
+for (let index = 0; index < cardsArray.length; index++) {
+  const { img, name } = cardsArray[index];
+  let gameCard = document.createElement("div");
+  gameCard.setAttribute("class", "game-card");
+  let gameCardImg = document.createElement("div");
+  gameCardImg.setAttribute("class", "game-card-img");
+  let gameCardWrap = document.createElement("div");
+  gameCardWrap.setAttribute("class", "game-card-wrap");
+  gameCardWrap.setAttribute("id", `${name}`);
+  gameCardWrap.setAttribute("data-id", `${index}`);
+  gameCard.append(gameCardWrap);
+  let cardIMg = document.createElement("img");
+  cardIMg.setAttribute("src", `${img}`);
+  cardIMg.setAttribute("alt", `_${name}`);
+  cardIMg.setAttribute("data-img-id", `id${index}`);
+  cardIMg.setAttribute("class", `card-img`);
+  gameCardImg.append(cardIMg);
+  gameCard.append(gameCardImg);
+  gameSurface.append(gameCard);
+}
+
+let count = 0;
+let record = cardsArray.reduce((acc, { name }) => {
+  acc[name] = false;
+  return acc;
+}, {});
+let score = 0;
+let selectCount = 0;
+let selectedChar1 = "";
+let selectedChar2 = "";
+let idArr = [];
+gameSurface.addEventListener("click", (event) => {
+  if (event.target.className === "game-card-wrap") {
+    count++;
+    selectCount++;
+    idArr.push(event.target.dataset.id);
+    if (selectCount % 2 == 0) {
+      selectedChar2 = event.target.id;
+    } else {
+      selectedChar1 = event.target.id;
+    }
+    event.target.className = "d-none";
+    changeAttempt(count);
+  }
+
+  if (selectCount == 2 && selectedChar1 === selectedChar2) {
+    setTimeout(() => {
+      for (let i = 0; i < idArr.length; i++) {
+        document.querySelector(`[data-img-id~='id${idArr[i]}']`).className =
+          "d-none";
+      }
+      idArr = [];
+      selectedChar2 = "";
+      selectedChar1 = "";
+      selectCount = 0;
+      score++;
+      changeScore(score);
+    }, 1000);
+  } else if (selectCount == 2 && selectedChar1 !== selectedChar2) {
+    setTimeout(() => {
+      for (let i = 0; i < idArr.length; i++) {
+        document.querySelector(`[data-id~='${idArr[i]}']`).className =
+          "game-card-wrap";
+      }
+      idArr = [];
+      selectCount = 0;
+      selectedChar1 = "";
+      selectedChar2 = "";
+    }, 1000);
+  }
+});
+
+function changeScore(score) {
+  document.querySelector(".score").innerText = score;
+}
+
+function changeAttempt(attempt) {
+  document.querySelector(".attempt").innerText = attempt;
+}
