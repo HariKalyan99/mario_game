@@ -113,15 +113,25 @@ gameSurface.addEventListener("click", (event) => {
     } else {
       selectedChar1 = event.target.id;
     }
-    event.target.className = "d-none";
-    changeAttempt(count);
+    new Promise((resolve) => {
+      event.target.style.transform = "rotateY(180deg)";
+      event.target.style.transition = "0.3s ease-in-out";
+      setTimeout(() => {
+        resolve("d-none")
+      }, 300)
+    }).then((res) => {
+      if(res){
+        event.target.className = res;
+      changeAttempt(count);
+      }
+    })
   }
 
   if (selectCount == 2 && selectedChar1 === selectedChar2) {
     setTimeout(() => {
       for (let i = 0; i < idArr.length; i++) {
-        document.querySelector(`[data-img-id~='id${idArr[i]}']`).className =
-          "d-none";
+        document.querySelector(`[data-id~='${idArr[i]}']`).className =
+          "game-card-wrap-green";
       }
       idArr = [];
       selectedChar2 = "";
@@ -135,6 +145,7 @@ gameSurface.addEventListener("click", (event) => {
       for (let i = 0; i < idArr.length; i++) {
         document.querySelector(`[data-id~='${idArr[i]}']`).className =
           "game-card-wrap";
+          document.querySelector(`[data-id~='${idArr[i]}']`).style  = ""
       }
       idArr = [];
       selectCount = 0;
