@@ -103,10 +103,14 @@ let selectCount = 0;
 let selectedChar1 = "";
 let selectedChar2 = "";
 let idArr = [];
+
 gameSurface.addEventListener("click", (event) => {
   if (event.target.className === "game-card-wrap") {
     count++;
     selectCount++;
+    if (count === 1) {
+      timer("start");
+    }
     idArr.push(event.target.dataset.id);
     if (selectCount % 2 == 0) {
       selectedChar2 = event.target.id;
@@ -117,14 +121,14 @@ gameSurface.addEventListener("click", (event) => {
       event.target.style.transform = "rotateY(180deg)";
       event.target.style.transition = "0.3s ease-in-out";
       setTimeout(() => {
-        resolve("d-none")
-      }, 300)
+        resolve("d-none");
+      }, 300);
     }).then((res) => {
-      if(res){
+      if (res) {
         event.target.className = res;
-      changeAttempt(count);
+        changeAttempt(count);
       }
-    })
+    });
   }
 
   if (selectCount == 2 && selectedChar1 === selectedChar2) {
@@ -145,7 +149,7 @@ gameSurface.addEventListener("click", (event) => {
       for (let i = 0; i < idArr.length; i++) {
         document.querySelector(`[data-id~='${idArr[i]}']`).className =
           "game-card-wrap";
-          document.querySelector(`[data-id~='${idArr[i]}']`).style  = ""
+        document.querySelector(`[data-id~='${idArr[i]}']`).style = "";
       }
       idArr = [];
       selectCount = 0;
@@ -157,8 +161,53 @@ gameSurface.addEventListener("click", (event) => {
 
 function changeScore(score) {
   document.querySelector(".score").innerText = score;
+  if (score === 8) {
+    return timer("stop");
+  }
 }
 
 function changeAttempt(attempt) {
-  document.querySelector(".attempt").innerText = attempt;
+  if (attempt % 2 === 0) {
+    document.querySelector(".attempt").innerText = attempt / 2;
+  }
+}
+
+let countTime = 0;
+let seconds = 0;
+let minute = 0;
+let hours = 0;
+
+let time;
+
+function timer(action) {
+  if (action === "start") {
+    time = setInterval(() => {
+      countTime++;
+      if (countTime % 100 === 0) {
+        seconds++;
+        document.querySelector(".time").innerHTML = `${
+          minute < 10 ? "0" + minute : minute
+        }:${seconds < 10 ? "0" + seconds : seconds}`;
+        if (seconds % 60 === 0) {
+          seconds = 0;
+          minute++;
+          if (minute % 60 === 0) {
+            minute = 0;
+            hours++;
+          }
+        }
+      }
+    }, 10);
+  } else if (action === "stop") {
+    clearInterval(time);
+    document.querySelector(".time").innerHTML = `${
+      minute < 10 ? "0" + minute : minute
+    }:${seconds < 10 ? "0" + seconds : seconds}`;
+  } else if (action === "reset") {
+    countTime = 0;
+    seconds = 0;
+    minute = 0;
+    hours = 0;
+    timer("start");
+  }
 }
